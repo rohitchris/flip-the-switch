@@ -100,7 +100,7 @@ sub update_switchboard {
 	my $colVal = $_[1]-1;
 
 	# update value / always invert the existing
-	if (defined $switchboard[$rowVal][$colVal]) {
+	if (defined $switchboard[$rowVal][$colVal] && $rowVal>=0 && $colVal>=0) {
 		$switchboard[$rowVal][$colVal] = (1-$switchboard[$rowVal][$colVal]);
 	}
 }
@@ -109,6 +109,9 @@ sub update_switchboard_adjacent {
 
 	my $rowVal = $_[0];
 	my $colVal = $_[1];
+
+	# invert the pressed cell
+	update_switchboard($rowVal, $colVal);
 
 	# invert the adjacent cells
 	update_switchboard($rowVal-1, $colVal);
@@ -127,9 +130,6 @@ sub update_switchboard_adjacent {
 	update_switchboard($rowVal-1, $colVal+1);
 	update_switchboard($rowVal+1, $colVal-1);
 	update_switchboard($rowVal+1, $colVal+1);
-
-	# invert the pressed cell
-	update_switchboard($rowVal, $colVal);
 }
 
 sub count_switchboard {
