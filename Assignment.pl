@@ -25,6 +25,7 @@ chomp $input;
 my @inputArr = split / /, $input;
 
 my $inputOnCount = 0;
+my $outputFlipCount = 0;
 
 while (my ($i, $el) = each @inputArr) {
 
@@ -33,13 +34,11 @@ while (my ($i, $el) = each @inputArr) {
 		
 		$inputOnCount = $el;
 	
-	} else { 
+	} else {
 
 		# 1. handle input - switch it on (1)
 
-		# print "$i : $inputOnCount\n";
 		if ($i<=$inputOnCount) {
-			# print "$el ON\n";
 
 			my @elArr = split //, $el;
 			my $row = 0;
@@ -56,18 +55,35 @@ while (my ($i, $el) = each @inputArr) {
 					update_switchboard($row, $eli);
 
 				}
-			}	
-			# loop through the row/col combination <row><col><col>....
+			}
+			
+		} else {
 
+			# 2. handle output - reverse the state (0/1)
+
+			my @elArr = split //, $el;
+			my $row = 0;
+			
+			while (my ($ii, $eli) = each @elArr) {
+
+				
+				if ($ii==0) {
+					$row = $eli;
+
+				} else {
+
+					# turn on the initial state of switchboard
+					update_switchboard_adjacent($row, $eli);
+
+				}
+			}
 		}
-
-		# 2. handle output - reverse the state (0/1)
-
 	}
 }
 
 print_switchboard();
 
+print count_switchboard()."\n";
 
 
 # helper functions 
@@ -78,8 +94,50 @@ sub update_switchboard {
 	my $colVal = $_[1]-1;
 
 	# update value / always invert the existing
-	$switchboard[$rowVal][$colVal] = (1-$switchboard[$rowVal][$colVal]);
+	if (defined $switchboard[$rowVal][$colVal]) {
+		$switchboard[$rowVal][$colVal] = (1-$switchboard[$rowVal][$colVal]);
+	}
 
+}
+
+sub update_switchboard_adjacent {
+
+	my $rowVal = $_[0];
+	my $colVal = $_[1];
+
+	# invert the adjacent cells
+	update_switchboard($rowVal-1, $colVal);
+	update_switchboard($rowVal+1, $colVal);
+	update_switchboard($rowVal, $colVal-1);
+	update_switchboard($rowVal, $colVal+1);
+
+	# invert the adjacent cells to the adjacent cells
+	update_switchboard($rowVal-2, $colVal);
+	update_switchboard($rowVal+2, $colVal);
+	update_switchboard($rowVal, $colVal-2);
+	update_switchboard($rowVal, $colVal+2);
+
+	# invert the diagnol cells
+	update_switchboard($rowVal-1, $colVal-1);
+	update_switchboard($rowVal-1, $colVal+1);
+	update_switchboard($rowVal+1, $colVal-1);
+	update_switchboard($rowVal+1, $colVal+1);
+
+	# make 0 the pressed cell
+	update_switchboard($rowVal, $colVal);
+}
+
+sub count_switchboard {
+	my $on = 0;
+	for (my $i = 0; $i < scalar(@switchboard); $i++) {  
+		for (my $j = 0; $j < scalar(@switchboard); $j++) {  
+	    	if ($switchboard[$i][$j]==1) {
+	    		$on++;
+	    	}
+	   	}  
+	}
+
+	return $on;
 }
 
 sub print_switchboard {
