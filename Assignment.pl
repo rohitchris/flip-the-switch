@@ -4,67 +4,62 @@
 use strict; 
 use warnings; 
 
+
 # define the 8x8 switchboard
-my @switchboard = (
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	);
+my @switchboard;
+my $input;
 
-# print_switchboard();
+print "Enter 5 lines of INPUT:\n";
+my $input1 = <STDIN>;
+my $input2 = <STDIN>;
+my $input3 = <STDIN>;
+my $input4 = <STDIN>;
+my $input5 = <STDIN>;
 
-# accept the input in a variable
-my $input = <STDIN>;
-chomp $input;
+run($input1);
+run($input2);
+run($input3);
+run($input4);
+run($input5);
 
-my @inputArr = split / /, $input;
 
-my $inputOnCount = 0;
-my $outputFlipCount = 0;
+sub run {
 
-while (my ($i, $el) = each @inputArr) {
+	# accept the input in a variable
+	$input = $_[0];
+	chomp $input;
 
-	
-	if ($i==0) {
+	@switchboard = (
+		[0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0],
+		);
+
+	# print_switchboard();
+
+
+	my @inputArr = split / /, $input;
+
+	my $inputOnCount = 0;
+	my $outputFlipCount = 0;
+
+	while (my ($i, $el) = each @inputArr) {
+
 		
-		$inputOnCount = $el;
-	
-	} else {
-
-		# 1. handle input - switch it on (1)
-
-		if ($i<=$inputOnCount) {
-
-			my @elArr = split //, $el;
-			my $row = 0;
+		if ($i==0) {
 			
-			while (my ($ii, $eli) = each @elArr) {
-
-				
-				if ($ii==0) {
-					$row = $eli;
-
-				} else {
-
-					# turn on the initial state of switchboard
-					update_switchboard($row, $eli);
-
-				}
-			}
-			
+			$inputOnCount = $el;
+		
 		} else {
 
-			# 2. handle output - reverse the state (0/1)
-			if ($i==$inputOnCount+1) {
+			# 1. handle input - switch it on (1)
 
-				my $outputFlipCount = $el;
-
-			} else {
+			if ($i<=$inputOnCount) {
 
 				my @elArr = split //, $el;
 				my $row = 0;
@@ -78,18 +73,45 @@ while (my ($i, $el) = each @inputArr) {
 					} else {
 
 						# turn on the initial state of switchboard
-						update_switchboard_adjacent($row, $eli);
+						update_switchboard($row, $eli);
 
+					}
+				}
+				
+			} else {
+
+				# 2. handle output - reverse the state (0/1)
+				if ($i==$inputOnCount+1) {
+
+					my $outputFlipCount = $el;
+
+				} else {
+
+					my @elArr = split //, $el;
+					my $row = 0;
+					
+					while (my ($ii, $eli) = each @elArr) {
+
+						
+						if ($ii==0) {
+							$row = $eli;
+
+						} else {
+
+							# turn on the initial state of switchboard
+							update_switchboard_adjacent($row, $eli);
+
+						}
 					}
 				}
 			}
 		}
 	}
+
+	# print_switchboard();
+
+	print count_switchboard()."\n";
 }
-
-print_switchboard();
-
-print count_switchboard()."\n";
 
 
 # helper functions 
