@@ -60,21 +60,27 @@ while (my ($i, $el) = each @inputArr) {
 		} else {
 
 			# 2. handle output - reverse the state (0/1)
+			if ($i==$inputOnCount+1) {
 
-			my @elArr = split //, $el;
-			my $row = 0;
-			
-			while (my ($ii, $eli) = each @elArr) {
+				my $outputFlipCount = $el;
 
+			} else {
+
+				my @elArr = split //, $el;
+				my $row = 0;
 				
-				if ($ii==0) {
-					$row = $eli;
+				while (my ($ii, $eli) = each @elArr) {
 
-				} else {
+					
+					if ($ii==0) {
+						$row = $eli;
 
-					# turn on the initial state of switchboard
-					update_switchboard_adjacent($row, $eli);
+					} else {
 
+						# turn on the initial state of switchboard
+						update_switchboard_adjacent($row, $eli);
+
+					}
 				}
 			}
 		}
@@ -97,7 +103,6 @@ sub update_switchboard {
 	if (defined $switchboard[$rowVal][$colVal]) {
 		$switchboard[$rowVal][$colVal] = (1-$switchboard[$rowVal][$colVal]);
 	}
-
 }
 
 sub update_switchboard_adjacent {
@@ -123,7 +128,7 @@ sub update_switchboard_adjacent {
 	update_switchboard($rowVal+1, $colVal-1);
 	update_switchboard($rowVal+1, $colVal+1);
 
-	# make 0 the pressed cell
+	# invert the pressed cell
 	update_switchboard($rowVal, $colVal);
 }
 
